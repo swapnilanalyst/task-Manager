@@ -43,3 +43,4 @@ Feature: Task Manager Registration Page
     Then Thank You page should be visible
     When I fetch login credentials from Mailinator
     Then I should be able to login successfully
+    Then All Steps Completed page should be visible

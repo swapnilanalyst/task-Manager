@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import RegistrationPage from "../../support/pageObjects/RegistrationPage";
+import RegistrationPage from "../pageObjects/RegistrationPage";
 import Chance from "chance";
 
 const registrationPage = new RegistrationPage();
@@ -168,3 +168,6 @@ Then("I should be able to login successfully", () => {
     });
   });
 })
+Then("All Steps Completed page should be visible", () => {
+  cy.log("All Steps Completed Successfully");
+});

@@ -407,38 +407,45 @@ it("TC_16 - Successful Registration with Verification & Login", () => {
       .should("not.be.empty")
       .then(cy.wrap)
       .within(() => {
-        cy.contains("p", "Email :").invoke("text").then((text) => {
-          extractedUser = text.replace("Email :", "").trim();
-          cy.log("Extracted Email:", extractedUser);
-        });
 
-        cy.contains("p", "Password :").invoke("text").then((text) => {
-          extractedPass = text.replace("Password :", "").trim();
-          cy.log("Extracted Password:", extractedPass);
-        });
+        cy.contains("p", "Email :")
+            .invoke("text")
+            .then((text) => {
+              extractedEmail = text.replace("Email :", "").trim();
+              cy.log("Extracted Email:", extractedEmail);
+            });
 
-        cy.contains("a", "Login Now")
-          .invoke("attr", "href") // Ensure it's the correct link
-          .then((href) => {
-            loginHref = href;   // ✅ assign to outer variable
-            cy.log("Extracted Login Link:", loginHref);
+       cy.contains("p", "Password :")
+            .invoke("text")
+            .then((text) => {
+              extractedPass = text.replace("Password :", "").trim();
+              cy.log("Extracted Password:", extractedPass);
+
+              // Save both dynamically to Node task
+              cy.task("setAuth", { user: extractedEmail, pass: extractedPass });
+            });
+
+          cy.contains("a", "Login Now").then(($a) => {
+            const href = $a.prop("href");
+            cy.log("Extracted Login Link:", href);
+            cy.task("saveLoginHref", href);
           });
 
       });
   });
 
   // ✅ Back to AUT origin for login (no need for cy.origin() here)
-  cy.then((loginHref) => {
-    // Visit the login page directly (no need for cy.origin here)
-    cy.visit(loginHref);
+cy.task("getLoginHref").then((href) => {
+    cy.task("getAuth").then(({ user, pass }) => {
+      cy.visit(href);
+      cy.get("input[name='email']").clear().type(user);   // use task data
+      cy.get("input[name='password']").clear().type(pass); // use task data
+      cy.get("button[type='submit']").click();
 
-    cy.get("input[name='email']").type(extractedUser);
-    cy.get("input[name='password']").type(extractedPass);
-    cy.get("button[type='submit']").click();
-
-    cy.url().should("include", "/dashboard");
-    cy.contains("Welcome").should("be.visible");
+      cy.url().should("include", "/dashboard");
+      cy.contains("Welcome").should("be.visible");
+    });
   });
-});
+})
 
 });
