@@ -52,6 +52,7 @@ Then("I should see invalid email error message", () => {
 When("I fill valid organization details", () => {
   const timestamp = Date.now();
   email = `user${timestamp}@mailinator.com`;
+  // email = `redv@mailinator.com`;
   username = chance.name();
   phone = chance.phone();
   addRess = chance.address();

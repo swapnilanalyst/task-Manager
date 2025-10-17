@@ -70,4 +70,4 @@ class DashboardMenuPage {
   }
 }
 
-export default DashboardMenuPage;
+export default DashboardMenuPage; 
