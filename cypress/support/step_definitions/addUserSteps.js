@@ -9,7 +9,6 @@ const loginPage = new LoginPage();
 const env = getEnvConfig();
 
 const JOB_TITLE_MAX = 25;
-const toastSelector = ".minimal__snackbar__toast";
 
 const uniqueEmail = (prefix = "user") => `${prefix}_${Date.now()}@test.com`;
 
@@ -18,6 +17,7 @@ const makeUser = (overrides = {}) => ({
   email: faker.internet.email(),
   mobileNumber: faker.string.numeric(10),
   jobTitle: faker.person.jobTitle().substring(0, JOB_TITLE_MAX),
+  joiningDate: "06/11/2025",
   ...overrides,
 });
 
@@ -27,12 +27,12 @@ const getToastText = () =>
 /* ===== Login background ===== */
 Given("I am logged in and on the dashboard page", () => {
   cy.session("validUserSession", () => {
-  loginPage.visit();
-  loginPage.enterEmail(env.users.valid.email);
-  loginPage.enterPassword(env.users.valid.password);
-  loginPage.clickLoginButton();
-  cy.url().should("include", "/dashboard");
-})
+    loginPage.visit();
+    loginPage.enterEmail(env.users.valid.email);
+    loginPage.enterPassword(env.users.valid.password);
+    loginPage.clickLoginButton();
+    cy.url().should("include", "/dashboard");
+  });
   cy.visit("/dashboard");
 });
 
@@ -139,9 +139,9 @@ When("I fill in user form with the existing mobile number", function () {
 });
 
 Then("I should see a duplicate email error", () => {
-  getToastText().then((text) => cy.log(`🔥 Toast: ${text}`));
+  addUserPage.getToastText().then((text) => cy.log(`🔥 Toast: ${text}`));
 });
 
 Then("I should see a duplicate mobile number error", () => {
-  getToastText().then((text) => cy.log(`🔥 Toast: ${text}`));
+  addUserPage.getToastText().then((text) => cy.log(`🔥 Toast: ${text}`));
 });
