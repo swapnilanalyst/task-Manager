@@ -9,12 +9,15 @@ const env = getEnvConfig();
 
 Given("I am logged into the Task Manager dashboard", () => {
   // Reusing loginPage methods from LoginPage to perform login
+  cy.session("validUserSession", () => {
   loginPage.visit();
   loginPage.enterEmail(env.users.valid.email); // Use the valid email from the env config
   loginPage.enterPassword(env.users.valid.password); // Use the valid password from the env config
   loginPage.clickLoginButton(); // Assuming you have a clickLoginButton() method in LoginPage
   cy.url().should("include", "/dashboard"); // Verify that we are redirected to the dashboard
   // dashboard.clickSideBarButton(); // Click the sidebar button to ensure the menu is visible
+});
+  cy.visit("/dashboard"); // Ensure we are on the dashboard page
 });
 
 When("I check for the dashboard logo", () => {

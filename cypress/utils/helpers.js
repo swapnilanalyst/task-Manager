@@ -77,55 +77,48 @@ export const getPageTitleByJS = () => {
 // cypress/utils/helpers.js
 
 export const selectDate = (date) => {
-  if (!date || typeof date !== "string" || !date.includes("/")) {
-    cy.log("⚠️ Invalid or missing date passed to selectDate helper.");
-    return;
-  }
+  const [day, month, year] = date.split("/").map(Number);
 
-  const [day, month, year] = date.split("/").map((p) => p.trim());
+  // Month names list (to match header text)
   const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
   ];
-  const targetMonth = monthNames[parseInt(month) - 1];
 
-  // 🔹 Step 1: Open calendar
-  cy.get('input[name="joiningDate"]').should('be.visible').click({ force: true });
+  // Open calendar input
+  cy.get('input[name="joiningDate"]').click({ force: true });
 
-  // 🔹 Step 2: Wait for the datepicker dialog
-  cy.get('div[role="presentation"], div[role="dialog"]', { timeout: 7000 })
-    .should('be.visible');
+  // Get current month and year from calendar header
+  cy.get('.MuiPickersCalendarHeader-label').invoke('text').then(header => {
+    const [curMonth, curYear] = header.split(" ");
+    const curMonthIndex = monthNames.indexOf(curMonth);
+    const curYearNum = parseInt(curYear);
+    const targetMonthIndex = month - 1;
 
-  // 🔹 Step 3: Ensure the header (month/year) is visible
-  cy.get('.MuiPickersCalendarHeader-label, .MuiPickersToolbar-title', { timeout: 7000 })
-    .should('be.visible')
-    .then(($label) => {
-      const headerText = $label.text();
+    // ✅ Step 1: If year is different, change year first
+    if (curYearNum !== year) {
+      cy.get('button[aria-label*="year view"], button[aria-label*="switch to year view"]').click({ force: true });
+      cy.contains('button', year).click({ force: true });
+    }
 
-      // 🔹 Step 4: Adjust Year if needed
-      if (!headerText.includes(year)) {
-        cy.get('button[aria-label*="year view"], button[aria-label*="switch to year view"]').click({ force: true });
-        cy.contains('.MuiPickersYear-root button, button.MuiPickersYear-yearButton', year).click({ force: true });
+    // ✅ Step 2: Move to correct month if needed
+    if (curMonthIndex !== targetMonthIndex) {
+      const diff = targetMonthIndex - curMonthIndex;
+      const direction = diff > 0 ? 'Next' : 'Previous';
+      for (let i = 0; i < Math.abs(diff); i++) {
+        cy.get(`button[aria-label="${direction} month"], button[title="${direction} month"]`)
+          .click({ force: true });
       }
+    }
 
-      // 🔹 Step 5: Adjust Month if needed
-      cy.get('.MuiPickersCalendarHeader-label, .MuiPickersToolbar-title', { timeout: 5000 })
-        .then(($header) => {
-          const currentMonth = $header.text().split(" ")[0];
-          if (currentMonth !== targetMonth) {
-            // Case-insensitive selectors for next/prev month
-            cy.get('button[aria-label="Next month"], button[title="Next month"]', { timeout: 5000 })
-              .click({ force: true })
-              .then(() => cy.wait(500)); // small pause for UI transition
-          }
-        });
+    // ✅ Step 3: Pick the date (day)
+    cy.contains('button.MuiPickersDay-root', new RegExp(`^${day}$`))
+      .click({ force: true });
 
-      // 🔹 Step 6: Select Day
-      cy.contains('button.MuiPickersDay-root', new RegExp(`^${day}$`))
-        .should('be.visible')
-        .click({ force: true });
-
-      cy.log(`✅ Selected date: ${date}`);
-    });
+    cy.log(`✅ Selected date: ${date}`);
+  });
 };
+
+
+
 

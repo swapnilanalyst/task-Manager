@@ -1,4 +1,3 @@
-// 📘 AddUserPage.js
 import {
   waitForElementVisibility,
   selectDate,
@@ -17,6 +16,7 @@ class AddUserPage {
     designation: "input[name='jobTitle']",
     joiningDate: "input[name='joiningDate']",
     submitButton: "button[type='submit']",
+    errorArea: ".form-error, .error, .invalid-feedback",
   };
 
   // 🔹 Click on account button
@@ -39,11 +39,10 @@ class AddUserPage {
 
   // 🔹 Fill the Add User form
   fillUserForm({ fullName, email, mobileNumber, jobTitle, joiningDate }) {
-    // Basic details
     cy.get(this.locators.fullName).clear().type(fullName);
     cy.get(this.locators.email).clear().type(email);
 
-    // Select Country (using contains for dynamic country name)
+    // Country select (India)
     cy.get(this.locators.countryCode)
       .click()
       .get('input[placeholder="Search..."]')
@@ -52,15 +51,14 @@ class AddUserPage {
       .filter(':not(:contains("British Indian Ocean Territory"))')
       .click();
 
-    // Mobile + Designation
     cy.get(this.locators.mobileNumber).clear().type(mobileNumber);
-    cy.get(this.locators.designation).clear().type(jobTitle);
+    cy.get(this.locators.designation).clear().type(jobTitle).invoke('val').should('have.length.at.most', 30);
 
-    // 🔹 Use reusable date selector from helpers
+
+    // Date selection
     waitForElementVisibility(this.locators.joiningDate);
-    selectDate("16/10/2025"); // Example: "16/10/2025"
+    selectDate(joiningDate || "06/11/2025");
 
-    // 🔹 Highlight after filling for debug (optional)
     highlightElement(this.locators.joiningDate, "lightgreen");
   }
 
@@ -69,6 +67,29 @@ class AddUserPage {
     waitForElementVisibility(this.locators.submitButton);
     cy.get(this.locators.submitButton).click();
   }
+
+  // 🔹 Navigate back to user list page
+  navigateToUserList() {
+    cy.visit("/dashboard/user/list");
+  }
+  // Clear all inputs in the form (useful before blank-submit tests)
+  clearForm() {
+    cy.get(this.locators.fullName).clear();
+    cy.get(this.locators.email).clear();
+    // close country dropdown if open and reset - safe to click
+    cy.get('body').click(0,0);
+    cy.get(this.locators.mobileNumber).clear();
+    cy.get(this.locators.designation).clear();
+    // If joiningDate is populated, clear it
+    cy.get(this.locators.joiningDate).then(($el) => {
+      if ($el && $el.val()) {
+        cy.get(this.locators.joiningDate).clear();
+      }
+    });
+  }
+
+
+
 }
 
 export default AddUserPage;
