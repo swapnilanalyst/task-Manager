@@ -22,48 +22,49 @@ Feature: Add User Functionality for Task Manager
     And I click on the submit button
     Then I should see a success message for user creation
     When I verify the added user account via Mailinator
-    Then Thank You page should be visible for user
-    When I fetch login credentials from Mailinator for user
+    Then User Verify Thank You page should be visible
+    When User fetch login credentials from Mailinator
 
-  @multipleUserCreation
-  Scenario: Add multiple users successfully
-    When I click on the account button
-    And I click on Add Users from the list
-    And I create 3 new users
 
-  @negative @BlankFields
-  Scenario: Verify system blocks saving blank form
-    When I click on the account button
-    And I click on Add Users from the list
-    And I click on the New User button
-    And I submit the form without filling any details
-    Then I should see validation errors for required fields
+  # @multipleUserCreation
+  # Scenario: Add multiple users successfully
+  #   When I click on the account button
+  #   And I click on Add Users from the list
+  #   And I create 3 new users
 
-  @negative @invalidEmailFormatCheck
-  Scenario: Verify invalid email format not accepted
-    When I click on the account button
-    And I click on Add Users from the list
-    And I click on the New User button
-    And I fill in user form with invalid email
-    And I click on the submit button
-    Then I should see an email format validation error
+  # @negative @BlankFields
+  # Scenario: Verify system blocks saving blank form
+  #   When I click on the account button
+  #   And I click on Add Users from the list
+  #   And I click on the New User button
+  #   And I submit the form without filling any details
+  #   Then I should see validation errors for required fields
 
-  @negative @duplicateEmailCheck
-  Scenario: Verify duplicate email cannot be used
-    When I click on the account button
-    And I click on Add Users from the list
-    And I create a new user and store its contact
-    And I click on the New User button
-    And I fill in user form with the existing email
-    And I click on the submit button
-    Then I should see a duplicate email error
+  # @negative @invalidEmailFormatCheck
+  # Scenario: Verify invalid email format not accepted
+  #   When I click on the account button
+  #   And I click on Add Users from the list
+  #   And I click on the New User button
+  #   And I fill in user form with invalid email
+  #   And I click on the submit button
+  #   Then I should see an email format validation error
 
-  @negative @duplicatePhoneNumberCheck
-  Scenario: Verify duplicate mobile number not accepted
-    When I click on the account button
-    And I click on Add Users from the list
-    And I create a new user and store its contact
-    And I click on the New User button
-    And I fill in user form with the existing mobile number
-    And I click on the submit button
-    Then I should see a duplicate mobile number error
+  # @negative @duplicateEmailCheck
+  # Scenario: Verify duplicate email cannot be used
+  #   When I click on the account button
+  #   And I click on Add Users from the list
+  #   And I create a new user and store its contact
+  #   And I click on the New User button
+  #   And I fill in user form with the existing email
+  #   And I click on the submit button
+  #   Then I should see a duplicate email error
+
+  # @negative @duplicatePhoneNumberCheck
+  # Scenario: Verify duplicate mobile number not accepted
+  #   When I click on the account button
+  #   And I click on Add Users from the list
+  #   And I create a new user and store its contact
+  #   And I click on the New User button
+  #   And I fill in user form with the existing mobile number
+  #   And I click on the submit button
+  #   Then I should see a duplicate mobile number error

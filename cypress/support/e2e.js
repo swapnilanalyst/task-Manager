@@ -23,3 +23,10 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     return false; // Prevent Cypress from failing the test
   }
 });
+
+Cypress.on('uncaught:exception', (err) => {
+  if (err.message.includes('Failed to execute \'send\' on \'WebSocket\'')) {
+    // Ignore this specific WebSocket error
+    return false;
+  }
+});

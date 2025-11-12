@@ -51,15 +51,16 @@ Then("I should see a success message for user creation", () => {
 
 /* -------- Mailinator flow -------- */
 When("I verify the added user account via Mailinator", () => {
+  cy.wait(2000); // wait for email delivery
   cy.get("@emailPrefix").then((prefix) => getVerifyLink(prefix).then((url) => cy.visit(url)));
 });
 
-Then("Thank You page should be visible for user", () => {
+Then("User Verify Thank You page should be visible", () => {
   cy.url().should("include", "/thank-you");
   cy.contains("Thank you!").should("be.visible");
 });
 
-When("I fetch login credentials from Mailinator for user", () => {
+When("User fetch login credentials from Mailinator", () => {
   cy.get("@emailPrefix").then((prefix) =>
     fetchCredentials(prefix).then(({ email, password, loginUrl }) => {
       cy.task("setAuth", { user: email, pass: password });

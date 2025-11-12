@@ -20,7 +20,7 @@ class AddUserPage {
     countrySearchInput: 'input[placeholder="Search..."]',
 
     submitButton: "button[type='submit']",
-    toast: ".minimal__snackbar__toast",
+    toast: ".minimal__snackbar__title",
   };
 
   /* ------------------- Common Clicks ------------------- */

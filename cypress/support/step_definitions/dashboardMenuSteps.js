@@ -21,6 +21,7 @@ Given("I am logged into the Task Manager dashboard", () => {
 });
 
 When("I check for the dashboard logo", () => {
+  dashboard.clickSideBarButton();
   dashboard.getLogo();
 });
 
