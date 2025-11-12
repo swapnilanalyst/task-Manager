@@ -9,47 +9,41 @@ class AddUserPage {
     accountButton: "button[aria-label='Account button']",
     addUserOption: "a[href='/dashboard/user/list']",
     newUserButton: "a[href='/dashboard/user/new']",
+
     fullName: "input[name='fullName']",
     email: "input[name='email']",
-    countryCode: "#country-list-button",
-    countrySearchInput: 'input[placeholder="Search..."]',
     mobileNumber: "input[name='mobileNumber']",
     designation: "input[name='jobTitle']",
     joiningDate: "input[name='joiningDate']",
+
+    countryCode: "#country-list-button",
+    countrySearchInput: 'input[placeholder="Search..."]',
+
     submitButton: "button[type='submit']",
     toast: ".minimal__snackbar__toast",
-    errorArea: ".form-error, .error, .invalid-feedback",
   };
 
+  /* ------------------- Common Clicks ------------------- */
+
   clickAccountButton() {
-    waitForElementVisibility(this.locators.accountButton);
     cy.get(this.locators.accountButton).click();
   }
 
   clickAddUserOption() {
-    waitForElementVisibility(this.locators.addUserOption);
     cy.get(this.locators.addUserOption).click();
   }
 
   clickNewUserButton() {
-    waitForElementVisibility(this.locators.newUserButton);
     cy.get(this.locators.newUserButton).click();
   }
 
-  /**
-   * Fill Add User form.
-   * Accepts an object with keys: fullName, email, mobileNumber, jobTitle, joiningDate
-   */
-  fillUserForm({ fullName, email, mobileNumber, jobTitle, joiningDate } = {}) {
-    if (fullName !== undefined) {
-      cy.get(this.locators.fullName).clear().type(fullName);
-    }
-    if (email !== undefined) {
-      cy.get(this.locators.email).clear().type(email);
-    }
+  /* ------------------- Form Filling ------------------- */
 
-    if (mobileNumber !== undefined) {
-      // open country dropdown and select India (defensive: search then click)
+  fillUserForm({ fullName, email, mobileNumber, jobTitle, joiningDate } = {}) {
+    if (fullName) cy.get(this.locators.fullName).clear().type(fullName);
+    if (email) cy.get(this.locators.email).clear().type(email);
+
+    if (mobileNumber) {
       cy.get(this.locators.countryCode).click();
       cy.get(this.locators.countrySearchInput).clear().type("India");
       cy.contains("India")
@@ -60,7 +54,7 @@ class AddUserPage {
       cy.get(this.locators.mobileNumber).clear().type(mobileNumber);
     }
 
-    if (jobTitle !== undefined) {
+    if (jobTitle) {
       cy.get(this.locators.designation)
         .clear()
         .type(jobTitle)
@@ -68,15 +62,15 @@ class AddUserPage {
         .should("have.length.at.most", 30);
     }
 
-    if (joiningDate !== undefined) {
-      waitForElementVisibility(this.locators.joiningDate);
+    if (joiningDate) {
       selectDate(joiningDate);
       highlightElement(this.locators.joiningDate, "lightgreen");
     }
   }
 
+  /* ------------------- Buttons ------------------- */
+
   clickSubmitButton() {
-    waitForElementVisibility(this.locators.submitButton);
     cy.get(this.locators.submitButton).click();
   }
 
@@ -84,26 +78,52 @@ class AddUserPage {
     cy.visit("/dashboard/user/list");
   }
 
-  /**
-   * Clear visible form fields. Safe to call before a blank-submit test.
-   */
+  /* ------------------- Helpers ------------------- */
+
   clearForm() {
-    cy.get("body").click(0, 0); // close any open dropdowns
     cy.get(this.locators.fullName).clear();
     cy.get(this.locators.email).clear();
     cy.get(this.locators.mobileNumber).clear();
     cy.get(this.locators.designation).clear();
-    cy.get(this.locators.joiningDate).then(($el) => {
-      if ($el.length && $el.val()) {
-        cy.wrap($el).clear();
-      }
-    });
+    cy.get(this.locators.joiningDate).clear({ force: true });
   }
 
-  // small helper for tests that check toast text
   getToastText() {
     return cy.get(this.locators.toast).should("be.visible").invoke("text");
   }
+
+
+  // +++ locators (append)
+list = {
+ container: ".minimal__layout__main > .MuiContainer-root",     // scroll container
+  table: "table.MuiTable-root",           // actual table
+  rows: "tbody.MuiTableBody-root > tr", 
+  search: "input[placeholder='Search...']",
+  rowsPerPage: ".MuiTablePagination-toolbar div[role='combobox']",
+  tab: '[role="tab"]'
+
+};
+
+// +++ methods (append)
+getUserListTable() {
+  return cy.get(this.list.container).find(this.list.table);
 }
+
+getUserRows() {
+  return cy.get(this.list.container).find(this.list.rows);
+}
+searchUsers(text) {
+  cy.get(this.list.search).clear().type(text);
+}
+setRowsPerPage(n) {
+  cy.get(this.list.rowsPerPage).click({ force: true });
+  cy.contains("li[role='option']", String(n)).click();
+}
+openUserTab(label) {
+  cy.contains(this.list.tab, label).click();
+}
+}
+
+
 
 export default AddUserPage;

@@ -59,7 +59,7 @@ export class RegistrationPage {
       .should("be.visible")
       .and("contain.text", "Welcome to Task Manager !");
     cy.get('input[type="text"]').type("Cypress Workspace");
-    cy.get(this.locators.saveWorkspace).contains("Save").click();
+    cy.get(this.locators.saveWorkspace).contains("Save").click({ force: true });
   }
 }
 

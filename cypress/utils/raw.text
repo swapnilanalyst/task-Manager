@@ -1,0 +1,150 @@
+<div class="MuiBox-root css-79elbk">
+  <div data-simplebar="init" class="minimal__scrollbar__root css-11xsm1u">
+    <div class="simplebar-wrapper" style="margin: 0px;">
+      <div class="simplebar-height-auto-observer-wrapper">
+        <div class="simplebar-height-auto-observer"></div>
+      </div>
+      <div class="simplebar-mask">
+        <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+          <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
+            style="height: auto; overflow: hidden;">
+            <div class="simplebar-content" style="padding: 0px;">
+              <table class="MuiTable-root css-1vkosmb">
+                <thead class="MuiTableHead-root css-s4zxv0">
+                  <tr class="MuiTableRow-root MuiTableRow-head css-1w2gtxn">
+                    <th
+                      class="MuiTableCell-root MuiTableCell-head MuiTableCell-paddingCheckbox MuiTableCell-sizeMedium css-1oriaad"
+                      scope="col"><span
+                        class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall css-63j0kh"><input
+                          id="all-row-checkbox" data-indeterminate="false" aria-label="All row Checkbox"
+                          class="PrivateSwitchBase-input css-j8yymo" type="checkbox"><svg
+                          class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-qgieeu" focusable="false"
+                          aria-hidden="true" viewBox="0 0 24 24">
+                        </svg><span class="MuiTouchRipple-root css-4mb1j7"></span></span></th>
+                    <th
+                      class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignLeft MuiTableCell-sizeMedium css-pfyl3"
+                      scope="col"><span
+                        class="MuiButtonBase-root MuiTableSortLabel-root MuiTableSortLabel-directionAsc css-c5n0w8"
+                        tabindex="0" role="button">Name</span></th>
+                    <th
+                      class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignLeft MuiTableCell-sizeMedium css-155to5l"
+                      scope="col"><span
+                        class="MuiButtonBase-root MuiTableSortLabel-root MuiTableSortLabel-directionAsc css-c5n0w8"
+                        tabindex="0" role="button">Phone number</span></th>
+                    <th
+                      class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignLeft MuiTableCell-sizeMedium css-tyom81"
+                      scope="col"><span
+                        class="MuiButtonBase-root MuiTableSortLabel-root MuiTableSortLabel-directionAsc css-c5n0w8"
+                        tabindex="0" role="button">Role</span></th>
+                    <th
+                      class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignLeft MuiTableCell-sizeMedium css-155to5l"
+                      scope="col"><span
+                        class="MuiButtonBase-root MuiTableSortLabel-root MuiTableSortLabel-directionAsc css-c5n0w8"
+                        tabindex="0" role="button">Joining Date</span></th>
+                    <th
+                      class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignLeft MuiTableCell-sizeMedium css-mbh8bj"
+                      scope="col"><span
+                        class="MuiButtonBase-root MuiTableSortLabel-root MuiTableSortLabel-directionAsc css-c5n0w8"
+                        tabindex="0" role="button">Status</span></th>
+                    <th
+                      class="MuiTableCell-root MuiTableCell-head MuiTableCell-alignLeft MuiTableCell-sizeMedium css-1tpzkbi"
+                      scope="col"><span
+                        class="MuiButtonBase-root MuiTableSortLabel-root MuiTableSortLabel-directionAsc css-c5n0w8"
+                        tabindex="0" role="button"></span></th>
+                  </tr>
+                </thead>
+                <tbody class="MuiTableBody-root css-y6j1my">
+                  <tr class="MuiTableRow-root MuiTableRow-hover css-1w2gtxn" aria-checked="false" tabindex="-1">
+                    <td
+                      class="MuiTableCell-root MuiTableCell-body MuiTableCell-paddingCheckbox MuiTableCell-sizeMedium css-v52ova">
+                      <span
+                        class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall css-63j0kh"><input
+                          id="69099b3f482ee5d0e962fdbc-checkbox" data-indeterminate="false"
+                          aria-label="69099b3f482ee5d0e962fdbc checkbox" class="PrivateSwitchBase-input css-j8yymo"
+                          type="checkbox"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-qgieeu"
+                          focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+                        </svg></span>
+                    </td>
+                    <td class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-1g0o23b">
+                      <div class="MuiBox-root css-18wzrqz">
+                        <div class="MuiStack-root css-r2lv1y"><a
+                            class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-1y0q96d"
+                            href="/dashboard/user/69099b3f482ee5d0e962fdbc/edit" data-discover="true">Angel
+                            Veum</a><span class="MuiBox-root css-16fgnkg">user_1762237239126_0@test.com</span></div>
+                      </div>
+                    </td>
+                    <td class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-ezvtec">+911559818025
+                    </td>
+                    <td class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-ezvtec">Principal
+                      Integration Analyst</td>
+                    <td class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-ezvtec">Dec 16, 2025</td>
+                    <td class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-1g0o23b"><span
+                        class="minimal__label__root css-647dvh">Active</span></td>
+                    <td class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-1g0o23b">
+                      <div class="MuiBox-root css-70qvj9"><button
+                          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-p62p6m" tabindex="0"
+                          type="button" aria-label="Quick Edit"><svg xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+                            class="iconify iconify--solar minimal__iconify__root css-eadae1" id="«r2o»" width="1em"
+                            height="1em" viewBox="0 0 24 24">
+
+                          </svg><span class="MuiTouchRipple-root css-4mb1j7"></span></button><button
+                          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-p62p6m" tabindex="0"
+                          type="button" aria-label="Delete"><svg xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+                            class="iconify iconify--solar minimal__iconify__root css-eadae1" id="«r2r»" width="1em"
+                            height="1em" viewBox="0 0 24 24">
+                          </svg><span class="MuiTouchRipple-root css-4mb1j7"></span></button></div>
+                    </td>
+                  </tr>
+                  <tr class="MuiTableRow-root MuiTableRow-hover css-1w2gtxn" aria-checked="false" tabindex="-1">
+                    <td
+                      class="MuiTableCell-root MuiTableCell-body MuiTableCell-paddingCheckbox MuiTableCell-sizeMedium css-v52ova">
+                      <span
+                        class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall css-63j0kh"><input
+                          id="69099bbf482ee5d0e962fe3f-checkbox" data-indeterminate="false"
+                          aria-label="69099bbf482ee5d0e962fe3f checkbox" class="PrivateSwitchBase-input css-j8yymo"
+                          type="checkbox"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-qgieeu"
+                          focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+
+                        </svg><span class="MuiTouchRipple-root css-4mb1j7"></span></span>
+                    </td>
+
+                          </svg></button></div>
+                    </td>
+                  </tr>
+                  <tr class="MuiTableRow-root MuiTableRow-hover css-1w2gtxn" aria-checked="false" tabindex="-1">
+                    <td
+                      class="MuiTableCell-root MuiTableCell-body MuiTableCell-paddingCheckbox MuiTableCell-sizeMedium css-v52ova">
+                      <span
+                        class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-sizeSmall css-63j0kh"><input
+                          id="6909b2e7ad7d2a057e72ccaa-checkbox" data-indeterminate="false"
+                          aria-label="6909b2e7ad7d2a057e72ccaa checkbox" class="PrivateSwitchBase-input css-j8yymo"
+                          type="checkbox"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-qgieeu"
+                          focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+
+                        </svg></span>
+                    </td>
+                          </svg></button></div>
+                    </td>
+                  </tr>
+                  <tr class="MuiTableRow-root css-1w2gtxn">
+                    <td class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium css-o8i48n" colspan="12">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="simplebar-placeholder" style="width: 1310px; height: 413px;"></div>
+    </div>
+    <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+      <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
+    </div>
+    <div class="simplebar-track simplebar-vertical" style="visibility: hidden;">
+      <div class="simplebar-scrollbar" style="height: 0px; display: none;"></div>
+    </div>
+  </div>
+</div>

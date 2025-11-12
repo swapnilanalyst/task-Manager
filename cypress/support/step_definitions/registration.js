@@ -1,5 +1,6 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import RegistrationPage from "../pageObjects/RegistrationPage";
+import {getVerifyLink, fetchCredentials} from "../../utils/helpers";
 import Chance from "chance";
 
 const registrationPage = new RegistrationPage();
@@ -83,27 +84,7 @@ Then("workspace setup modal should appear", () => {
 });
 
 When("I verify the account via Mailinator", () => {
-  cy.origin(
-    "https://www.mailinator.com",
-    { args: { userEmailPrefix } },
-    ({ userEmailPrefix }) => {
-      const mailinatorUrl = `https://www.mailinator.com/v4/public/inboxes.jsp?to=${userEmailPrefix}`;
-      cy.visit(mailinatorUrl);
-      cy.contains("td", "Verify your email address to complete Signup", {
-        timeout: 30000,
-      }).click();
-
-      cy.get("iframe#html_msg_body")
-        .its("0.contentDocument.body")
-        .should("not.be.empty")
-        .then(cy.wrap)
-        .find("a[href*='verify']")
-        .should("have.attr", "href")
-        .then((verifyUrl) => {
-          cy.visit(verifyUrl);
-        });
-    }
-  );
+  getVerifyLink(userEmailPrefix).then((url) => cy.visit(url));
 });
 
 Then("Thank You page should be visible", () => {
@@ -112,49 +93,16 @@ Then("Thank You page should be visible", () => {
 });
 
 When("I fetch login credentials from Mailinator", () => {
-  cy.origin(
-    "https://www.mailinator.com",
-    { args: { userEmailPrefix } },
-    ({ userEmailPrefix }) => {
-      const mailinatorUrl = `https://www.mailinator.com/v4/public/inboxes.jsp?to=${userEmailPrefix}`;
-      cy.visit(mailinatorUrl);
-      cy.contains(
-        "td",
-        "Welcome to TaskManager - Your Account is Now Verified",
-        { timeout: 30000 }
-      ).click();
-
-      cy.get("iframe#html_msg_body")
-        .its("0.contentDocument.body")
-        .should("not.be.empty")
-        .then(cy.wrap)
-        .within(() => {
-          cy.contains("p", "Email :")
-            .invoke("text")
-            .then((text) => {
-              extractedEmail = text.replace("Email :", "").trim();
-              cy.log("Extracted Email:", extractedEmail);
-            });
-
-          cy.contains("p", "Password :")
-            .invoke("text")
-            .then((text) => {
-              extractedPass = text.replace("Password :", "").trim();
-              cy.log("Extracted Password:", extractedPass);
-
-              // Save both dynamically to Node task
-              cy.task("setAuth", { user: extractedEmail, pass: extractedPass });
-            });
-
-          cy.contains("a", "Login Now").then(($a) => {
-            const href = $a.prop("href");
-            cy.log("Extracted Login Link:", href);
-            cy.task("saveLoginHref", href);
-          });
-        });
-    }
-  );
+  fetchCredentials(userEmailPrefix).then(({ email, password, loginUrl }) => {
+    cy.task("setAuth", { user: email, pass: password });
+    cy.task("saveLoginHref", loginUrl);
+  });
 });
+
+When("I check Mailinator for {string}", (subject) => {
+  cy.mailinatorWaitForEmail(userEmailPrefix, subject);
+});
+
 
 Then("I should be able to login successfully", () => {
   cy.task("getLoginHref").then((href) => {

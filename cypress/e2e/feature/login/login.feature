@@ -1,9 +1,10 @@
+@Reg
 Feature: Login Functionality for Task Manager
 
   Background:
     Given I am on the login page
 
-  @positive
+  @positive  @e2e
   Scenario: Successful login with valid credentials
     When I enter valid email and password
     And I click on the login button

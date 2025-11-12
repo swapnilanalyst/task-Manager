@@ -120,5 +120,77 @@ export const selectDate = (date) => {
 };
 
 
+export const waitForMail = (prefix, subject, timeout = 30000) => {
+  return cy.origin(
+    "https://www.mailinator.com",
+    { args: { prefix, subject, timeout } },
+    ({ prefix, subject, timeout }) => {
+      const inboxUrl = `https://www.mailinator.com/v4/public/inboxes.jsp?to=${prefix}`;
+      cy.visit(inboxUrl);
+      cy.contains("td", subject, { timeout }).should("be.visible");
+    }
+  );
+};
+
+export const getVerifyLink = (
+  prefix,
+  subject = "Verify your email address to complete Signup",
+  linkPart = "verify",
+  timeout = 30000
+) => {
+  return cy.origin(
+    "https://www.mailinator.com",
+    { args: { prefix, subject, linkPart, timeout } },
+    ({ prefix, subject, linkPart, timeout }) => {
+      const inboxUrl = `https://www.mailinator.com/v4/public/inboxes.jsp?to=${prefix}`;
+      cy.visit(inboxUrl);
+
+      cy.contains("td", subject, { timeout }).click();
+
+      cy.get("iframe#html_msg_body")
+        .its("0.contentDocument.body")
+        .should("not.be.empty")
+        .then(cy.wrap)
+        .find(`a[href*='${linkPart}']`)
+        .invoke("attr", "href")
+        .then((href) => cy.wrap(href));
+    }
+  );
+};
+
+export const fetchCredentials = (
+  prefix,
+  subject = "Welcome to TaskManager - Your Account is Now Verified",
+  timeout = 30000
+) => {
+  return cy.origin(
+    "https://www.mailinator.com",
+    { args: { prefix, subject, timeout } },
+    ({ prefix, subject, timeout }) => {
+      const inboxUrl = `https://www.mailinator.com/v4/public/inboxes.jsp?to=${prefix}`;
+      cy.visit(inboxUrl);
+
+      cy.contains("td", subject, { timeout }).click();
+
+      cy.get("iframe#html_msg_body")
+        .its("0.contentDocument.body")
+        .should("not.be.empty")
+        .then(cy.wrap)
+        .then(($body) => {
+          const extract = (label) =>
+            $body.find(`p:contains('${label}')`).text().replace(label, "").trim();
+
+          const email = extract("Email :");
+          const password = extract("Password :");
+          const loginUrl = $body.find("a:contains('Login Now')").prop("href");
+
+          cy.wrap({ email, password, loginUrl });
+        });
+    }
+  );
+};
+
+
+
 
 
