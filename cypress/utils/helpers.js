@@ -38,6 +38,21 @@ export const switchToNewTab = () => {
   });
 };
 
+// 🔹 5. Get trimmed text of an element
+export function getText(selector, expectedText = null) {
+  return cy.get(selector).invoke("text").then((t) => {
+    const trimmed = t.trim();
+    cy.log("Actual Text: " + trimmed);
+
+    if (expectedText) {
+      expect(trimmed).to.equal(expectedText);
+    }
+
+    return cy.wrap(trimmed);   // 🔥 FIX — return wrapped value
+  });
+}
+
+
 // 🔹 6. Handle Bootstrap-like dropdown
 export const selectFromBootstrapDropdown = (dropdownSelector, optionText) => {
   cy.get(dropdownSelector).click();
@@ -189,6 +204,188 @@ export const fetchCredentials = (
     }
   );
 };
+
+// cypress/utils/cardHelper.js
+
+// ✅ UPDATED: now supports custom alias (default old behaviour jaisa hi)
+export const getCardByTarget = (cardLocator, target, alias = "selectedItem") => {
+  return cy.get(cardLocator).then(($cards) => {
+    let card;
+    const index = Number(target);
+    const isIndex = !Number.isNaN(index) && String(index) === String(target);
+
+    cy.log(`Searching card by ${isIndex ? "index" : "text match"}: ${target}`);
+
+    if (isIndex) {
+      card = $cards.get(index);
+    } else {
+      const regex = new RegExp(target, "i");
+      card = [...$cards].find((c) => regex.test(c.innerText));
+    }
+
+    if (!card) {
+      throw new Error(`Card not found for target: ${target}`);
+    }
+
+    const fullText = card.innerText.trim();
+    const primaryText = fullText.split("\n")[0].trim();
+
+    cy.wrap(primaryText).as(alias);   // ⭐ alias configurable
+    return cy.wrap(card);
+  });
+};
+
+
+export const assertValueNotInList = (listLocator, expected) => {
+  cy.get(listLocator).then($list => {
+    const listText = $list.text();
+
+    cy.log("===== ASSERTION REPORT =====");
+    cy.log(`Expected NOT to find : ${expected}`);
+    cy.log(`List Content        : ${listText}`);
+    console.table({ Expected: expected, "List Content": listText });
+
+    expect(listText.includes(expected)).to.be.false;
+  });
+};
+
+
+export function assertValueInList(listSelector, expectedValue, mode ="equal") {
+  cy.log(`🔎 Verifying value in list`);
+  cy.log(`📌 List Selector: ${listSelector}`);
+  cy.log(`📌 Expected Value: ${expectedValue}`);
+  cy.log(`📌 Mode: ${mode}`);
+
+  cy.get(listSelector)
+    .then(($items) => {
+      cy.log(`📋 Total items found: ${$items.length}`);
+
+      let matchFound = false;
+
+      $items.each((index, el) => {
+        const actualText = el.innerText.trim();
+        cy.log(`➡️ Item ${index + 1}: "${actualText}"`);
+
+        let toCompareActual = actualText;
+        let toCompareExpected = expectedValue;
+
+        // Handle ellipsis ("Space_1234....")
+        if (actualText.includes("…") || actualText.includes("...")) {
+          toCompareActual = actualText.replace("…", "").replace("...", "").trim();
+          toCompareExpected = expectedValue.substring(0, toCompareActual.length);
+        }
+
+        switch (mode) {
+          case "equal":
+            if (toCompareActual === toCompareExpected) matchFound = true;
+            break;
+
+          case "contains":
+            if (toCompareActual.includes(toCompareExpected)) matchFound = true;
+            break;
+
+          case "startswith":
+            if (toCompareActual.startsWith(toCompareExpected)) matchFound = true;
+            break;
+
+          default:
+            throw new Error(`Unknown mode: ${mode}`);
+        }
+      });
+
+      expect(matchFound, `Expected value "${expectedValue}" not found in list`).to.be.true;
+      cy.log(`✅ Match Found → "${expectedValue}"`);
+    });
+}
+
+
+
+export const assertValidation = (locator, expected, operator = "gte") => {
+  cy.get(locator).then(($items) => {
+    const count = $items.length;
+
+    cy.log("===== LIST COUNT ASSERTION =====");
+    cy.log(`Locator     : ${locator}`);
+    cy.log(`Operator    : ${operator}`);
+    cy.log(`Expected    : ${expected}`);
+    cy.log(`Actual      : ${count}`);
+
+    switch (operator) {
+      case "gt":
+        expect(count).to.be.greaterThan(expected);
+        break;
+      case "gte":
+        expect(count).to.be.at.least(expected);
+        break;
+      case "eq":
+        expect(count).to.eq(expected);
+        break;
+      case "lt":
+        expect(count).to.be.lessThan(expected);
+        break;
+      case "lte":
+        expect(count).to.be.at.most(expected);
+        break;
+      default:
+        throw new Error(`Invalid operator '${operator}' in assertListCount`);
+    }
+  });
+};
+
+
+// ✅ NEW: Generic max-length assertion for any input / textarea
+export const assertMaxLength = (selector, max) => {
+  cy.get(selector)
+    .invoke("val")
+    .then((val) => {
+      const length = (val || "").length;
+
+      cy.log("===== MAX LENGTH ASSERTION =====");
+      cy.log(`Selector : ${selector}`);
+      cy.log(`Max      : ${max}`);
+      cy.log(`Actual   : ${length}`);
+
+      expect(length, `Value length should be <= ${max}`).to.be.at.most(max);
+    });
+};
+
+// ✅ NEW: Type long text and verify it is trimmed to max length
+export const typeWithMaxLengthCheck = (selector, text, max) => {
+  cy.get(selector).clear().type(text);
+  assertMaxLength(selector, max);
+};
+
+// ✅ NEW: Generic toast assertion for any module
+export const assertToastMessage = (
+  toastSelector,
+  expected,
+  mode = "contains" // "contains" | "equals" | "matches"
+) => {
+  cy.get(toastSelector, { timeout: 10000 })
+    .should("be.visible")
+    .invoke("text")
+    .then((raw) => {
+      const actual = (raw || "").trim();
+      cy.log("===== TOAST ASSERTION =====");
+      cy.log(`Expected (${mode}) : ${expected}`);
+      cy.log(`Actual             : ${actual}`);
+
+      switch (mode) {
+        case "equals":
+          expect(actual).to.eq(expected);
+          break;
+        case "matches":
+          expect(actual).to.match(expected); // expected = RegExp
+          break;
+        default:
+          expect(actual.toLowerCase()).to.include(
+            String(expected).toLowerCase()
+          );
+      }
+    });
+};
+
+
 
 
 

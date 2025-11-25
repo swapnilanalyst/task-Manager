@@ -3,6 +3,7 @@ const webpack = require("@cypress/webpack-preprocessor");
 const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
 
 module.exports = defineConfig({
+  projectId: '4v6qct',
   e2e: {
     baseUrl: "http://taskmanager.salesninjacrm.com",
     specPattern: ["cypress/e2e/**/*.feature", "cypress/e2e/**/*.cy.js"], // Only feature files
