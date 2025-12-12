@@ -3,6 +3,7 @@ import TeamManagementPage from "../../support/pageObjects/TeamManagementPage";
 import LoginPage from "../../support/pageObjects/LoginPage";
 import { getEnvConfig } from "../../utils/envHelper";
 import { fa, faker } from "@faker-js/faker";
+import { assertValueInList, softAssertListValue } from "../../utils/helpers"; 
 
 const teamPage = new TeamManagementPage();
 const loginPage = new LoginPage();
@@ -164,35 +165,35 @@ When("I click the add member button", () => {
   teamPage.clickAddMember();
 });
 
-When("I select member {string} from the member list", (memberName) => {
-   cy.get('[role="dialog"]').within(() => {
-    // find the <td> that has the member’s name
-    cy.contains('td.MuiTableCell-root', memberName)
-      .parents('tr')                         // go to the row
-      .within(() => {
-        cy.get("td").eq(1).invoke("text").then((text) => {
-        selectedMember = text.trim();      // ⭐ stored
-        cy.log("Selected Member = " + selectedMember);
-      });
-        cy.get('input[type="checkbox"], [role="checkbox"]')
-          .first()
-          .click({ force: true });
-          
-      });
-      cy.contains("button", "Save").click();
+When("I select member {string} from the member list", (input) => {
+  teamPage.selectMember(input).then((selectedName) => {
+    selectedMember = selectedName.toString().trim();
+
+    cy.log("Alias set for member: " + selectedMember);
+    cy.wrap(selectedMember).as("selectedMemberName");   // ⭐ ab ye string hai
   });
-  teamPage.getToast("Employee added in team")
+
+  cy.contains("button", "Save").click();
+  teamPage.getToast("Member added in team");
 });
 
 When("I open the stored team from the list", () => {
+  cy.log(selectedMember)
+  cy.wait(2000); // wait for list refresh
   teamPage.clickTeamByName(selectedTeam);
 });
 
 
 Then("I should see that member added to the team", () => {
+  cy.get("@selectedMemberName").then((name) => {
+    cy.log("Verifying member in team: " + name);
+    const memberName = name.toString().trim();
 
-  // const regex = new RegExp(selectedMember, "i"); // i = ignore case
-  teamPage.verifyEmployeeInList(selectedMember);
+    cy.log("Verifying member: " + memberName);
+
+    // softAssertListValue(teamPage.locators.allMembersList, memberName);
+    teamPage.verifyEmployeeInList(memberName);
+  });
 });
 
 
@@ -216,7 +217,7 @@ When("Go to the {string} tab", (label) => {
 
 Then("I should see the all members list", () => {
   cy.contains("Members").should("be.visible");
-  teamPage.getAllMemberList();
+  teamPage.getAllMemberListInMemberTab();
 });
 
 

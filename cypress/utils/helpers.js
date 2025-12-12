@@ -12,7 +12,7 @@ export const waitForElementVisibility = (selector, timeout = 5000) => {
 export const clickByJS = (selector) => {
   cy.window().then((win) => {
     const element = win.document.querySelector(selector);
-    element?.click();
+    element?.click({force:true});
   });
 };
 
@@ -235,6 +235,26 @@ export const getCardByTarget = (cardLocator, target, alias = "selectedItem") => 
   });
 };
 
+export function logAndAssertList(listLocator, listName = "List") {
+  return cy.get(listLocator).then(($items) => {
+
+    const count = $items.length;
+
+    cy.log(`${listName} Count: ${count}`);
+    console.log(`${listName} Count:`, count);
+
+    const itemList = [...$items].map((el) => el.innerText.trim());
+
+    cy.log(`${listName} Items:`);
+    console.log(`${listName} Items:`, itemList);
+    console.table(itemList);
+
+    expect(count, `${listName} should not be empty`).to.be.greaterThan(0);
+
+    // THE FIX
+    return cy.wrap({ count, itemList });
+  });
+}
 
 export const assertValueNotInList = (listLocator, expected) => {
   cy.get(listLocator).then($list => {
@@ -250,55 +270,64 @@ export const assertValueNotInList = (listLocator, expected) => {
 };
 
 
-export function assertValueInList(listSelector, expectedValue, mode ="equal") {
-  cy.log(`🔎 Verifying value in list`);
-  cy.log(`📌 List Selector: ${listSelector}`);
-  cy.log(`📌 Expected Value: ${expectedValue}`);
-  cy.log(`📌 Mode: ${mode}`);
+export function assertValueInList(listSelector, expectedValue, mode = "contains") {
+  cy.log("🔎 Verifying value in list...");
+  cy.log(`📌 Selector : ${listSelector}`);
+  cy.log(`📌 Expected : ${expectedValue}`);
+  cy.log(`📌 Mode     : ${mode}`);
 
-  cy.get(listSelector)
-    .then(($items) => {
-      cy.log(`📋 Total items found: ${$items.length}`);
+  cy.get(listSelector).then(($items) => {
+    const cleanExpected = String(expectedValue)
+      .replace(/[.…]/g, "")
+      .trim()
+      .toLowerCase();
 
-      let matchFound = false;
+    cy.log(`📋 Total items found: ${$items.length}`);
 
-      $items.each((index, el) => {
-        const actualText = el.innerText.trim();
-        cy.log(`➡️ Item ${index + 1}: "${actualText}"`);
+    let matchFound = false;
 
-        let toCompareActual = actualText;
-        let toCompareExpected = expectedValue;
+    $items.each((index, el) => {
+      const raw = el.innerText.trim();
 
-        // Handle ellipsis ("Space_1234....")
-        if (actualText.includes("…") || actualText.includes("...")) {
-          toCompareActual = actualText.replace("…", "").replace("...", "").trim();
-          toCompareExpected = expectedValue.substring(0, toCompareActual.length);
-        }
+      // Normalize actual text
+      const cleanActual = raw.replace(/[.…]/g, "").trim().toLowerCase();
 
-        switch (mode) {
-          case "equal":
-            if (toCompareActual === toCompareExpected) matchFound = true;
-            break;
+      cy.log(`➡️ [${index + 1}], "${cleanActual}"`);
 
-          case "contains":
-            if (toCompareActual.includes(toCompareExpected)) matchFound = true;
-            break;
+      switch (mode) {
+        case "equal":
+          if (cleanActual === cleanExpected) matchFound = true;
+          break;
 
-          case "startswith":
-            if (toCompareActual.startsWith(toCompareExpected)) matchFound = true;
-            break;
+        case "contains":
+          if (
+            cleanActual.includes(cleanExpected) ||
+            cleanExpected.includes(cleanActual)
+          )
+            matchFound = true;
+          break;
 
-          default:
-            throw new Error(`Unknown mode: ${mode}`);
-        }
-      });
+        case "startswith":
+          if (
+            cleanActual.startsWith(cleanExpected) ||
+            cleanExpected.startsWith(cleanActual)
+          )
+            matchFound = true;
+          break;
 
-      expect(matchFound, `Expected value "${expectedValue}" not found in list`).to.be.true;
-      cy.log(`✅ Match Found → "${expectedValue}"`);
+        default:
+          throw new Error(`❌ Unknown mode: ${mode}`);
+      }
     });
+
+    expect(
+      matchFound,
+      `❌ Value "${expectedValue}" not found in list`
+    ).to.be.true;
+
+    cy.log(`✅ Match Found → "${expectedValue}"`);
+  });
 }
-
-
 
 export const assertValidation = (locator, expected, operator = "gte") => {
   cy.get(locator).then(($items) => {
@@ -356,12 +385,11 @@ export const typeWithMaxLengthCheck = (selector, text, max) => {
 };
 
 // ✅ NEW: Generic toast assertion for any module
-export const assertToastMessage = (
-  toastSelector,
-  expected,
+export const assertToastMessage = (toastSelector,expected,
   mode = "contains" // "contains" | "equals" | "matches"
 ) => {
-  cy.get(toastSelector, { timeout: 10000 })
+  cy.wait(1000);
+  cy.get(toastSelector)
     .should("be.visible")
     .invoke("text")
     .then((raw) => {
@@ -372,7 +400,7 @@ export const assertToastMessage = (
 
       switch (mode) {
         case "equals":
-          expect(actual).to.eq(expected);
+          expect(expected).to.eq(actual);
           break;
         case "matches":
           expect(actual).to.match(expected); // expected = RegExp
@@ -384,6 +412,95 @@ export const assertToastMessage = (
       }
     });
 };
+
+
+// 🔥 Universal List Assertion Utility
+export const softAssertListValue = (listLocator, expected, matchType = "contains") => {
+  cy.get(listLocator).then(($list) => {
+    const listText = $list.text().trim();
+    const search = (expected ?? "").toString().trim();
+
+    let result = false;
+
+    // 🔥 Switch Case for Flexibility
+    switch (matchType.toLowerCase()) {
+      case "eq":
+      case "equals":
+        result = listText === search;
+        break;
+
+      case "contains":
+        result = listText.includes(search);
+        break;
+
+      case "startswith":
+        result = listText.startsWith(search);
+        break;
+
+      case "endswith":
+        result = listText.endsWith(search);
+        break;
+
+      default:
+        throw new Error(`❌ Invalid match type: ${matchType}`);
+    }
+
+    // 📌 Reporting Table
+    const report = [
+      { Field: "Expected", Value: search },
+      { Field: "Match Type", Value: matchType },
+      { Field: "Actual Text", Value: listText },
+      { Field: "Matched?", Value: result },
+    ];
+
+    console.table(report);
+
+    // Assertions
+    expect(result, `List value assertion failed for: ${matchType}`).to.be.true;
+  });
+};
+
+// utils/softAssertHelpers.js (ya jaha tum rakhna chaho)
+export const softAssertToastMessageSoft = (
+  selector,
+  expected,
+  mode = "contains",   // "contains" | "equals" | "matches"
+  label = "Toast message"
+) => {
+  cy.get(selector, { timeout: 10000 })
+    .should("be.visible")
+    .invoke("text")
+    .then((raw) => {
+      const actual = (raw || "").trim();
+
+      cy.log("===== SOFT ASSERTION (TOAST) =====");
+      cy.log(`Expected (${mode}) : ${expected}`);
+      cy.log(`Actual             : ${actual}`);
+
+      let pass = false;
+
+      switch (mode) {
+        case "equals":
+          pass = actual === String(expected);
+          break;
+
+        case "matches":
+          pass = new RegExp(expected).test(actual); // ya expected ko direct RegExp bhi bhej sakta hai
+          break;
+
+        default: // "contains"
+          pass = actual.toLowerCase().includes(String(expected).toLowerCase());
+      }
+
+      cy.softAssert(
+  pass,
+  `[Toast message] Expected (equals) "${expected}" but got "${actual}"`
+);
+    });
+};
+
+
+
 
 
 

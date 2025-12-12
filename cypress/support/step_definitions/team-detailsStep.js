@@ -48,12 +48,12 @@ Then("the top Remove User From Team button should be enabled", () => {
 
 Then("I click on the top Remove User From Team button", () => {
   cy.get(teamPage.locators.removeUserBtn).click({ multiple: true });
-  teamPage.getToast("Employee remove from team");
+  teamPage.getToast("Member remove from team");
 });
 
 Then("that member should be removed from the team list", () => {
   cy.wait(1000); // wait for UI to update
-  cy.get("@selectedMemberName").then((name) => {
+  cy.get("@selectedItem").then((name) => {
     assertValueNotInList(teamPage.locators.allCards, name);
   });
 });
@@ -78,12 +78,12 @@ When("I click on Remove User From Team button on that member card", () => {
 
 Then("I confirm member removal", () => {
   cy.contains("button", "Delete").click();
-  teamPage.getToast("Employee remove from team");
+  teamPage.getToast("Member remove from team");
 });
 
 Then("that member should not be visible in the team list anymore", () => {
   cy.wait(1000); // wait for UI to update
-  cy.get("@selectedMemberName").then((name) => {
+  cy.get("@selectedItem").then((name) => {
     assertValueNotInList(teamPage.locators.allCards, name);
   });
 });
@@ -104,12 +104,12 @@ When("I confirm adding member to the team", () => {
   cy.contains("button", "Save").click();
 });
 Then("I should see a success message for adding member", () => {
-  teamPage.getToast("Employee added in team");
+  teamPage.getToast("Member added in team");
 });
 
 Then("the added member should be visible in the team members list", () => {
   cy.wait(1000);
-  cy.get("@selectedMemberName").then((name) => {
+  cy.get("@selectedItem").then((name) => {
     assertValueInList(teamPage.locators.allCards, name);
   });
 });

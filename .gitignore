@@ -3,7 +3,10 @@ node_modules/
 package-lock.json
 cypress.env.json
 raw.text/
-
+allure-report
+allure-results
+cucumber-report
+screenshots
 
 
 

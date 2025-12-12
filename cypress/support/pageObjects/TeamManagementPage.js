@@ -5,7 +5,7 @@ class TeamManagementPage {
     pageTitle: ".css-yihcqv > .MuiBox-root",
     teamsTab: "button[role='tab']:contains('Teams')",
     allMembersTab: "button[role='tab']:contains('All Members')",
-    allMembersList: ".MuiGrid-root.MuiGrid-container",
+    allMembersList: ".MuiCard-root.css-vlj3uq",
     rolesTab: "button[role='tab']:contains('Roles & Permissions')",
     createTeamBtn: "button:contains('Create Team')",
     inviteMemberBtn: "button:contains('Invite Member')",
@@ -25,6 +25,7 @@ class TeamManagementPage {
     emmployeeList: ".MuiListItemText-root > .MuiTypography-root",
     selectAllCheckbox: "label:contains('Select All') input[type='checkbox']",
     allCards:'.MuiBox-root.css-0',
+    allmemberNamesList: '.MuiCard-root.css-ztvvev',
     addEmpList: '.MuiTableBody-root .MuiTableRow-root',
     removeUserBtn: ".MuiContainer-root > :nth-child(2) > .MuiButtonBase-root",
     addMemberInTeamBtn: "button:contains('Add Members in team')",
@@ -118,6 +119,48 @@ class TeamManagementPage {
     cy.get(this.locators.addMemberBtn).first().click();
   }
 
+
+  // TeamManagementPage.js
+
+selectMember(target) {
+  if (!isNaN(target)) {
+    const index = parseInt(target, 10);
+
+    return cy
+      .get('[role="dialog"] table tbody tr')
+      .eq(index)
+      .then(($row) => {
+        const selected = $row.find("td").eq(1).text().trim();
+        cy.log("Selected Member (by index) = " + selected);
+
+        cy.wrap($row)
+          .find('input[type="checkbox"], [role="checkbox"]')
+          .first()
+          .click({ force: true });
+
+        return cy.wrap(selected);   // ⭐ FIX
+      });
+  }
+
+  return cy
+    .get('[role="dialog"] td.MuiTableCell-root')
+    .contains(target)
+    .parents("tr")
+    .then(($row) => {
+      const selected = $row.find("td").eq(1).text().trim();
+      cy.log("Selected Member (by name) = " + selected);
+
+      cy.wrap($row)
+        .find('input[type="checkbox"], [role="checkbox"]')
+        .first()
+        .click({ force: true });
+
+      return cy.wrap(selected);   // ⭐ FIX
+    });
+}
+
+
+
   selectRowsPerPage(n) {
     cy.get(this.locators.rowsPerPageDropdown).click();
     cy.contains("li[role='option']", String(n)).click();
@@ -201,6 +244,14 @@ class TeamManagementPage {
   }
 
   getAllMemberList() {
+    cy.get(this.locators.allmemberNamesList).then(($list) => {
+      const members = [...$list].map((e) => e.innerText.trim());
+      console.table(members);
+      cy.log(`All Members: ${members.join(", ")}`);
+    });
+  }
+
+  getAllMemberListInMemberTab() {
     cy.get(this.locators.allMembersList).then(($list) => {
       const members = [...$list].map((e) => e.innerText.trim());
       console.table(members);
@@ -228,7 +279,7 @@ getAddEmpList(target) {
   // yaha expected action perform karoge
   clickRemoveUserFromTeam(target) {
     this.getMemberCard(target)
-      .contains("button", "Remove User From Team")
+      .contains("button", "Remove Member From Team")
       .click();
   }
 

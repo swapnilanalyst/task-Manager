@@ -49,7 +49,7 @@ Feature: Team Management Module
    When  I search for "BT Team"
     And each visible teams row should include "Bt Team" in list
     And I click the add member button
-    And I select member "Kranti" from the member list
+    And I select member "1" from the member list
     And I open the stored team from the list
     Then I should see that member added to the team
 

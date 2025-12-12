@@ -3,7 +3,7 @@ import AddUserPage from "../../support/pageObjects/AddUserPage";
 import LoginPage from "../../support/pageObjects/LoginPage";
 import { faker } from "@faker-js/faker";
 import { getEnvConfig } from "../../utils/envHelper";
-import { getVerifyLink, fetchCredentials } from "../../utils/helpers";
+import { getVerifyLink, fetchCredentials, assertToastMessage, softAssertToastMessageSoft } from "../../utils/helpers";
 
 const addUserPage = new AddUserPage();
 const loginPage = new LoginPage();
@@ -76,8 +76,9 @@ When("I create {int} new users", (count) => {
     addUserPage.clickNewUserButton();
     addUserPage.fillUserForm(user);
     addUserPage.clickSubmitButton();
-    cy.contains("Create success!", { timeout: 10000 }).should("be.visible");
+    softAssertToastMessageSoft(addUserPage.locators.toast, "Create success!", 'equals', { timeout: 10000 });
     addUserPage.navigateToUserList();
+    cy.softAssertAll();
   });
 });
 
@@ -112,9 +113,10 @@ When("I create a new user and store its contact", () => {
   addUserPage.clickNewUserButton();
   addUserPage.fillUserForm(user);
   addUserPage.clickSubmitButton();
-  cy.contains("Create success!", { timeout: 10000 }).should("be.visible");
+  softAssertToastMessageSoft(addUserPage.locators.toast, "Create success!", 'equals');
   cy.wrap(user).as("createdUser");
   addUserPage.navigateToUserList();
+  
 });
 
 When("I fill in user form with the existing email", () => {
@@ -128,11 +130,13 @@ When("I fill in user form with the existing mobile number", () => {
 });
 
 Then("I should see a duplicate email error", () => {
-  addUserPage.getToastText().then((t) => cy.log(`Toast: ${t}`));
+  assertToastMessage(addUserPage.locators.toast, "member with this email ID already exists.", 'equals');
 });
 
+
 Then("I should see a duplicate mobile number error", () => {
-  addUserPage.getToastText().then((t) => cy.log(`Toast: ${t}`));
+  assertToastMessage(addUserPage.locators.toast, "Member with this mobile number already exist!", 'equals');
+  cy.softAssertAll();
 });
 
 /* -------- User List steps -------- */

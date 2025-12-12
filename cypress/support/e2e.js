@@ -17,6 +17,11 @@
 import './commands'
 import 'cypress-xpath'
 import 'cypress-iframe';
+import "@shelex/cypress-allure-plugin";
+
+
+// const softAssert = require("chai-soft-assert");
+// chai.use(softAssert);
 
 Cypress.on('uncaught:exception', (err, runnable) => {
   if (err.message.includes('unrecognized expression')) {
@@ -30,3 +35,21 @@ Cypress.on('uncaught:exception', (err) => {
     return false;
   }
 });
+
+import { getEnvConfig } from "../utils/envHelper";
+
+// after(() => {
+//   const env = getEnvConfig();
+
+//   const envData = {
+//     Tester: "Swapnil Gupta",
+//     Environment: Cypress.env("activeEnv"),
+//     BaseURL: env.baseUrl,
+//     LoginPath: env.loginPath,
+//     Browser: Cypress.browser.name,
+//     Platform: "Cypress",
+//   };
+
+//   cy.task("writeAllureEnv", envData);
+// });
+
